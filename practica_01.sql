@@ -91,5 +91,14 @@ where desc_titulo like 'Tecnico%';
         
 SELECT *
 FROM solicitudes_empresas
-where fecha_solicitud > "20130921" and cod_cargo > 6 or sexo= "Femenino"
+where fecha_solicitud > "20130921" and cod_cargo = "6" or sexo ="Femenino"
 ;
+
+
+-- EJ (14)
+		--  Seleccionar los contratos con un salario pactado mayor que 2000 y que no hayan sido
+		-- terminado
+
+SELECT *
+FROM contratos
+where sueldo > 2000 and fecha_caducidad is null ;
