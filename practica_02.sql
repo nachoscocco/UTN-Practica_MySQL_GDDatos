@@ -148,4 +148,77 @@ left join contratos as co
  left join personas as p on an.dni = p.dni
  left join empresas as e on e.cuit = an.cuit;
  
+ -- EJ (14) AFATSE
+ -- Indicar todos los instructores que tengan un supervisor. Mostrar:
+ --
+ SELECT i.cuil as CuilInstructor ,
+		i.nombre as NombreInstruc, 
+        i.apellido as ApellidoInstuct , 
+        IFnull(   i2.cuil, " ") as SupervisorCuil ,  
+        IFnull(   i2.nombre, " ")   as SupervisorName,
+        IFnull(   i2.apellido, " ")  as SupervisorApellido
+ FROM instructores as i 
+ left join instructores as i2 on i2.cuil = i.cuil_supervisor
  
+ order by i.cuil asc ;
+ 
+ -- EJ (15) AFATSE
+ -- MISMO Q 14 PERO CON ESPACIOS EN BLANCO\
+
+ --
+ SELECT i.cuil as CuilInstructor ,
+		i.nombre as NombreInstruc, 
+        i.apellido as ApellidoInstuct , 
+        i2.cuil as SupervisorCuil , 
+        i2.nombre as SupervisorName,
+        i2.apellido as SupervisorApellido
+ FROM instructores as i 
+ inner join instructores as i2 on i2.cuil = i.cuil_supervisor
+ where i.cuil_supervisor is not null
+ order by i.cuil asc ;
+ 
+ 
+ 
+ -- EJ (15) AFATSE
+	-- Ranking de Notas por Supervisor e Instructor. El ranking deberá indicar para cada
+	-- supervisor los instructores a su cargo y las notas de los exámenes que el instructor haya
+	-- corregido en el 2014. Indicando los datos del supervisor , nombre y apellido del instructor,
+	-- plan de capacitación, curso, nombre y apellido del alumno, examen, fecha de evaluación y
+	-- nota. En caso de que no tenga supervisor a cargo indicar espacios en blanco. Ordenado
+	-- ascendente por nombre y apellido de supervisor y descendente por fecha.
+ --
+ 
+ 
+ select distinct  -- SUPERVISOR ( C INSTRUCT PUEDE O NO TENER SUPERVISOR)
+		ifnull(i2.cuil, "NULL") as CuilSupervisor,
+		ifnull(i2.nombre, "NULL") as NombreSupervisor,
+        ifnull(i2.apellido, "NULL") as ApellidoSupervisor,
+        -- INSTRUCTORES
+        i.nombre as NombreInstructor,
+        i.apellido as ApellidoInstructor,
+        -- CURSOS INSTRUCTORES
+        ci.nom_plan,
+        ci.nro_curso,
+        -- ALUMNO
+        a.apellido as ApellidoAlumn,
+        a.nombre as NombreAlumn,
+        -- EVALUACIONES 
+        e.nro_examen, 
+        e.fecha_evaluacion,
+        e.nota
+
+FROM instructores as i
+left JOIN instructores         as i2   on i2.cuil = i.cuil_supervisor
+inner join cursos_instructores as ci   on ci.cuil = i.cuil
+inner join cursos              as c    on c.nro_curso = ci.nro_curso
+inner join inscripciones       as ins    on ins.nro_curso = c.nro_curso
+inner join alumnos             as a    on a.dni       = ins.dni
+inner join evaluaciones        as e    on e.dni       = a.dni
+where e.fecha_evaluacion between '2014-01-01' and '2014-12-31'
+order by i2.nombre asc , i2.apellido asc , e.fecha_evaluacion desc
+;
+
+
+        
+	
+	
